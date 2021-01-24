@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-fetch';
+
 const dateRegex = new RegExp('^\\d\\d\\d\\d-\\d\\d-\\d\\d');
 
 function jsonDateReviver(key, value) {
@@ -5,7 +7,8 @@ function jsonDateReviver(key, value) {
     return value;
 }
 
-export default async function graphQLFetch(query, variables = {}, showError = null, cookie = null) {
+export default async function
+    graphQLFetch(query, variables = {}, showError = null, cookie = null) {
     const apiEndpoint = (__isBrowser__) // eslint-disable-line no-undef
         ? window.ENV.UI_API_ENDPOINT
         : process.env.UI_SERVER_API_ENDPOINT;
@@ -20,11 +23,12 @@ export default async function graphQLFetch(query, variables = {}, showError = nu
         });
         const body = await response.text();
         const result = JSON.parse(body, jsonDateReviver);
+
         if (result.errors) {
             const error = result.errors[0];
             if (error.extensions.code === 'BAD_USER_INPUT') {
                 const details = error.extensions.exception.errors.join('\n ');
-                if (showError) showError(`${error.message}:\n ${details}`); //The showError function passed in from the parent component is a function that takes a message as a parameter, so in this case the argument would be `${error.message}:\n ${details}` 
+                if (showError) showError(`${error.message}:\n ${details}`); //The showError function passed in from the parent component is a function that takes a message as a parameter, so in this case the argument would be `${error.message}:\n ${details}`
             } else if (showError) {
                 showError(`${error.extensions.code}: ${error.message}`);
             }
